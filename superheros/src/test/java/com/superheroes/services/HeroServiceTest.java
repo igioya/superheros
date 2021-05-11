@@ -1,5 +1,6 @@
 package com.superheroes.services;
 
+import com.superheroes.exceptions.persistence.NotFoundException;
 import com.superheroes.model.Hero;
 import com.superheroes.persistence.HeroRepository;
 import org.junit.Test;
@@ -49,7 +50,7 @@ public class HeroServiceTest {
     }
 
     @Test
-    public void getHeroById() {
+    public void getHeroById() throws NotFoundException {
         /*#### Given ####*/
         Hero heroToReturn = new Hero("Spiderman");
         when(this.heroRepository.findById(anyLong())).thenReturn(heroToReturn);
