@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <properties>
+        <property name="filename">/var/log/event-tickets/server</property>
+    </properties>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS}"/>
+        </Console>
+        <File name="File" fileName="${filename}" bufferedIO="true" immediateFlush="true">
+            <PatternLayout>
+                <pattern>%d %p %C{1.} [%t] %m%n</pattern>
+            </PatternLayout>
+        </File>
+    </Appenders>
+    <Loggers>
+        <Root level="error">
+            <AppenderRef ref="Console"/>
+        </Root>
+        <Logger name="com.superheroes.utils.Log" level="trace">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <Logger name="com.superheroes.utils.Log" level="debug" additivity="false">
+            <AppenderRef ref="File" />
+        </Logger>
+    </Loggers>
+</Configuration>
