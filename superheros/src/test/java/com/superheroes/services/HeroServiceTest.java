@@ -47,6 +47,10 @@ public class HeroServiceTest {
 
         /*#### Then ####*/
         assertTrue(3 == superheroes.size());
+        assertTrue(superheroes.stream().anyMatch(hero -> hero.getName() == "Batman"));
+        assertTrue(superheroes.stream().anyMatch(hero -> hero.getName() == "Superman"));
+        assertTrue(superheroes.stream().anyMatch(hero -> hero.getName() == "Spiderman"));
+
     }
 
     @Test
@@ -76,6 +80,8 @@ public class HeroServiceTest {
 
         /*#### Then ####*/
         assertTrue(2 == heros.size());
+        assertTrue(heros.stream().anyMatch(hero -> hero.getName() == "Batman"));
+        assertTrue(heros.stream().anyMatch(hero -> hero.getName() == "Superman"));
     }
 
     @Test
