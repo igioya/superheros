@@ -96,24 +96,4 @@ public class HeroRepositoryTest {
         /*#### Then ####*/
         heroRepository.findById(heroId);
     }
-
-    @Test
-    public void findHerosByString() throws NotFoundException {
-        /*#### Given ####*/
-        this.heroRepository.save(new Hero("Batman"));
-        this.heroRepository.save(new Hero("Superman"));
-        this.heroRepository.save(new Hero("Thor"));
-
-        /*#### When ####*/
-        List<Hero> herosWithManString = this.heroRepository.findHerosByString("man");
-
-        /*#### Then ####*/
-        List<Hero> superherosToReturn = new ArrayList<>() {{
-            add(new Hero("Batman"));
-            add(new Hero("Superman"));
-        }};
-
-        assertTrue(herosWithManString.stream().anyMatch(hero -> hero.getName() == "Batman"));
-        assertTrue(herosWithManString.stream().anyMatch(hero -> hero.getName() == "Superman"));
-    }
 }

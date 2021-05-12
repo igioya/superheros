@@ -72,8 +72,10 @@ public class HeroServiceTest {
         List<Hero> superherosToReturn = new ArrayList<>() {{
             add(new Hero("Superman"));
             add(new Hero("Batman"));
+            add(new Hero("Hulk"));
+            add(new Hero("Thor"));
         }};
-        when(this.heroRepository.findHerosByString(anyString())).thenReturn(superherosToReturn);
+        when(this.heroRepository.findAll()).thenReturn(superherosToReturn);
 
         /*#### When ####*/
         List<Hero> heros = heroService.getHerosByString("man");

@@ -6,6 +6,7 @@ import com.superheroes.persistence.HeroRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -30,6 +31,9 @@ public class HeroService {
     }
 
     public List<Hero> getHerosByString(String string) {
-        return this.heroRepository.findHerosByString(string);
+        List<Hero> allHeros = this.heroRepository.findAll();
+        List herosByString = new ArrayList();
+        allHeros.stream().filter(hero -> hero.getName().contains(string)).forEach(hero -> herosByString.add(hero));
+        return herosByString;
     }
 }

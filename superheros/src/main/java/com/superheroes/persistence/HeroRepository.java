@@ -11,10 +11,4 @@ public class HeroRepository extends AbstractRepository<Hero> {
     public HeroRepository(){
         setClazz(Hero.class);
     }
-
-    public List<Hero> findHerosByString(String string) {
-        Query query = getCurrentSession().createQuery("select h from Hero h where h.name like concat('%',:string,'%')");
-        query.setParameter("string", string);
-        return query.getResultList();
-    }
 }
