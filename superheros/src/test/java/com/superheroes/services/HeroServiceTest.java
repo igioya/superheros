@@ -7,7 +7,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
@@ -16,10 +18,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 @SpringBootTest
@@ -87,7 +89,7 @@ public class HeroServiceTest {
     }
 
     @Test
-    public void editHeroById() {
+    public void editHeroById() throws NotFoundException {
         /*#### Given ####*/
         Hero hero = new Hero("Spiderman");
 
@@ -100,14 +102,19 @@ public class HeroServiceTest {
     }
 
     @Test
-    public void deleteHero() {
+    public void deleteHero() throws NotFoundException {
         /*#### Given ####*/
         Hero hero = new Hero("Spiderman");
+        doAnswer(new Answer<Void>() {
+            public Void answer(InvocationOnMock invocation) {
+                return null;
+            }
+        }).when(this.heroRepository).deleteById(1L);
 
         /*#### When ####*/
-        heroService.delete(hero);
+        heroService.delete(1L);
 
         /*#### Then ####*/
-        verify(heroRepository).delete(hero);
+        verify(heroRepository).deleteById(1L);
     }
 }

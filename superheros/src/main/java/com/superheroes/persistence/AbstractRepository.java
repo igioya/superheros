@@ -4,6 +4,7 @@ import com.superheroes.exceptions.persistence.NotFoundException;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.TransientObjectException;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -38,12 +39,22 @@ public abstract class AbstractRepository<T extends Serializable>{
         return (List<T>) sessionFactory.getCurrentSession().createQuery("from " + clazz.getName()).list();
     }
 
-    public T update(final T entity){
-        return (T) sessionFactory.getCurrentSession().merge(entity);
+    public void update(final T entity) throws NotFoundException {
+        try {
+            sessionFactory.getCurrentSession().update(entity);
+        } catch (TransientObjectException e){
+            throw new NotFoundException();
+        }
     }
 
-    public void delete(final T entity) {
-        sessionFactory.getCurrentSession().delete(entity);
+    public void deleteById(final long id) throws NotFoundException {
+        final T entity;
+        try {
+            entity = findById(id);
+            sessionFactory.getCurrentSession().delete(entity);
+        } catch (NotFoundException e) {
+            throw new NotFoundException();
+        }
     }
 
     public Serializable save(final T entity) throws HibernateException {

@@ -86,14 +86,7 @@ public class HeroRepositoryTest {
 
     @Test(expected = NotFoundException.class)
     public void delete() throws NotFoundException {
-        /*#### Given ####*/
-        Hero batman = new Hero("Batman");
-        Long heroId = (Long) this.heroRepository.save(batman);
-
         /*#### When ####*/
-        this.heroRepository.delete(batman);
-
-        /*#### Then ####*/
-        heroRepository.findById(heroId);
+        this.heroRepository.deleteById(1L);
     }
 }

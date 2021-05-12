@@ -22,12 +22,12 @@ public class HeroService {
         return this.heroRepository.findById(id);
     }
 
-    public void editHero(Hero hero) {
+    public void editHero(Hero hero) throws NotFoundException {
         this.heroRepository.update(hero);
     }
 
-    public void delete(Hero hero) {
-        this.heroRepository.delete(hero);
+    public void delete(Long heroId) throws NotFoundException {
+        this.heroRepository.deleteById(heroId);
     }
 
     public List<Hero> getHerosByString(String string) {
