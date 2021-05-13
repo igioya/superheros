@@ -1,5 +1,6 @@
 package com.superheroes.webservices;
 
+import com.superheroes.config.annotations.logexcecutiontime.LogExecutionTime;
 import com.superheroes.exceptions.persistence.NotFoundException;
 import com.superheroes.model.Hero;
 import com.superheroes.services.HeroService;
@@ -20,6 +21,7 @@ public class HeroController {
     @Autowired
     HeroService heroService;
 
+    @LogExecutionTime
     @RequestMapping(value = "/all", method = RequestMethod.GET)
     public ResponseEntity<String> getAll() {
         List<Hero> heros = this.heroService.getAll();
@@ -28,6 +30,7 @@ public class HeroController {
         return new ResponseEntity<>(JsonHelper.fromObjectToJSON(succesResponse), HttpStatus.OK);
     }
 
+    @LogExecutionTime
     @RequestMapping(value = "/get/{heroId}", method = RequestMethod.GET)
     public ResponseEntity<String> getHero(@PathVariable("heroId") Long heroId)  {
         Hero hero = null;
@@ -43,6 +46,7 @@ public class HeroController {
         }
     }
 
+    @LogExecutionTime
     @RequestMapping(value = "/edit/{heroId}", method = RequestMethod.POST)
     public ResponseEntity<String> editHero(@RequestBody Hero hero)  {
         Response response = new SuccessResponse();
@@ -57,6 +61,7 @@ public class HeroController {
         }
     }
 
+    @LogExecutionTime
     @RequestMapping(value = "/delete/{heroId}", method = RequestMethod.POST)
     public ResponseEntity<String> deleteHero(@PathVariable("heroId") Long heroId)  {
         Response response = new SuccessResponse();
@@ -69,6 +74,7 @@ public class HeroController {
         }
     }
 
+    @LogExecutionTime
     @RequestMapping(value = "/getByString/{string}", method = RequestMethod.GET)
     public ResponseEntity<String> getByString(@PathVariable("string") String string) {
         List<Hero> herosByString = this.heroService.getHerosByString(string);
