@@ -1,0 +1,25 @@
+version: "3"
+
+networks:
+    superheros-net:
+
+services:
+
+  superheros-container:
+    build: superheros
+    image: superheros-image
+    container_name: superheros-container
+    hostname: superheros-app
+    tty: true
+    networks:
+      - superheros-net
+    volumes:
+      - ./superheros/target/:/usr/src/myapp
+    environment:
+      HIBERNATE_DIALECT: org.hibernate.dialect.H2Dialect
+      JDBC_URL: jdbc:h2:mem:superheros_db
+
+
+volumes:
+  mysql-data:
+    driver: local
