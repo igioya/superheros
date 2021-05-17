@@ -47,6 +47,15 @@ public class HeroController {
     }
 
     @LogExecutionTime
+    @RequestMapping(value = "/new", method = RequestMethod.POST)
+    public ResponseEntity<String> newHero(@RequestBody Hero hero)  {
+        Response response = new SuccessResponse();
+        this.heroService.save(hero);
+        response.setData(hero);
+        return new ResponseEntity<>(JsonHelper.fromObjectToJSON(response), HttpStatus.OK);
+    }
+
+    @LogExecutionTime
     @RequestMapping(value = "/edit/{heroId}", method = RequestMethod.POST)
     public ResponseEntity<String> editHero(@RequestBody Hero hero)  {
         Response response = new SuccessResponse();

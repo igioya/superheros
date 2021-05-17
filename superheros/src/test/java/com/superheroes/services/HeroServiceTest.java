@@ -2,6 +2,7 @@ package com.superheroes.services;
 
 import com.superheroes.exceptions.persistence.NotFoundException;
 import com.superheroes.model.Hero;
+import com.superheroes.persistence.HeroRedisRepository;
 import com.superheroes.persistence.HeroRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,9 +17,10 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -33,6 +35,9 @@ public class HeroServiceTest {
 
     @Mock
     private HeroRepository heroRepository;
+
+    @Mock
+    private HeroRedisRepository heroRedisRepository;
 
     @Test
     public void getAllHeros() {
@@ -56,9 +61,23 @@ public class HeroServiceTest {
     }
 
     @Test
-    public void getHeroById() throws NotFoundException {
+    public void getHeroByIdFromCache() throws NotFoundException {
         /*#### Given ####*/
         Hero heroToReturn = new Hero("Spiderman");
+        when(this.heroRedisRepository.getById(anyLong())).thenReturn(java.util.Optional.of(heroToReturn));
+
+        /*#### When ####*/
+        Hero hero = heroService.getById(1L);
+
+        /*#### Then ####*/
+        assertTrue(heroToReturn == hero);
+    }
+
+    @Test
+    public void getHeroByIdFromBD() throws NotFoundException {
+        /*#### Given ####*/
+        Hero heroToReturn = new Hero("Spiderman");
+        when(this.heroRedisRepository.getById(anyLong())).thenReturn(java.util.Optional.ofNullable(null));
         when(this.heroRepository.findById(anyLong())).thenReturn(heroToReturn);
 
         /*#### When ####*/
@@ -69,21 +88,38 @@ public class HeroServiceTest {
     }
 
     @Test
-    public void findHeroByString() {
+    public void findHeroByStringFromCache() {
         /*#### Given ####*/
         List<Hero> superherosToReturn = new ArrayList<>() {{
             add(new Hero("Superman"));
             add(new Hero("Batman"));
-            add(new Hero("Hulk"));
-            add(new Hero("Thor"));
         }};
-        when(this.heroRepository.findAll()).thenReturn(superherosToReturn);
+        when(this.heroRedisRepository.getByString(anyString())).thenReturn(Optional.ofNullable(superherosToReturn));
 
         /*#### When ####*/
         List<Hero> heros = heroService.getHerosByString("man");
 
         /*#### Then ####*/
-        assertTrue(2 == heros.size());
+        assertEquals(2 , heros.size());
+        assertTrue(heros.stream().anyMatch(hero -> hero.getName() == "Batman"));
+        assertTrue(heros.stream().anyMatch(hero -> hero.getName() == "Superman"));
+    }
+
+    @Test
+    public void findHeroByStringFromDB() {
+        /*#### Given ####*/
+        List<Hero> superherosToReturn = new ArrayList<>() {{
+            add(new Hero("Superman"));
+            add(new Hero("Batman"));
+        }};
+        when(this.heroRedisRepository.getByString(anyString())).thenReturn(Optional.ofNullable(null));
+        when(this.heroRepository.findByString(anyString())).thenReturn(superherosToReturn);
+
+        /*#### When ####*/
+        List<Hero> heros = heroService.getHerosByString("man");
+
+        /*#### Then ####*/
+        assertEquals(2 , heros.size());
         assertTrue(heros.stream().anyMatch(hero -> hero.getName() == "Batman"));
         assertTrue(heros.stream().anyMatch(hero -> hero.getName() == "Superman"));
     }
@@ -99,6 +135,20 @@ public class HeroServiceTest {
 
         /*#### Then ####*/
         verify(heroRepository).update(hero);
+        verify(heroRedisRepository).save(hero);
+    }
+
+    @Test
+    public void saveHero() throws NotFoundException {
+        /*#### Given ####*/
+        Hero hero = new Hero("Hulk");
+
+        /*#### When ####*/
+        heroService.save(hero);
+
+        /*#### Then ####*/
+        verify(heroRepository).save(hero);
+        verify(heroRedisRepository).save(hero);
     }
 
     @Test
@@ -116,5 +166,6 @@ public class HeroServiceTest {
 
         /*#### Then ####*/
         verify(heroRepository).deleteById(1L);
+        verify(heroRedisRepository).removeQueries(1L);
     }
 }

@@ -17,6 +17,11 @@ public class Hero implements Serializable {
         this.name = heroname;
     }
 
+    public Hero(Long heroid, String heroname) {
+        this.name = heroname;
+        this.id = heroid;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
